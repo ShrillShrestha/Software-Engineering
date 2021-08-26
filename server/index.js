@@ -2,15 +2,14 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const cors = require('cors');
 const { client } = require('./utils/databaseConnection');
+const path = require("path");
 
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get('/', function (req, res) {
-  res.send('Hello World');
-});
+app.use(express.static(path.join(__dirname, "..", "frontend", "build")));
 
 app.get('/poc', async (req, res) => {
   try {
@@ -34,7 +33,11 @@ app.post('/poc', async (req, res) => {
   }
 });
 
-var server = app.listen(8081, function () {
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, "..", "frontend" , "build", "index.html"));
+});
+
+var server = app.listen(80, function () {
   var host = server.address().address;
   var port = server.address().port;
 
